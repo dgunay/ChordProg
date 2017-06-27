@@ -20,7 +20,18 @@ Other TODO:
 #include "Chord.h"
 int main()
 {
-	Chord C("C", 4, MAJOR);
+	for (int i = MAJOR; i < OTHER; i++)
+	{
+		Chord C("C", 4, i);
+		std::cout << C.toString() << '\n';
+	}
+		
+	//chords appear correct - check for correct absolutekeypos
+
+	//find a way to choose correct enharmonicity
+	//e.g. Cmin is currently showinng as C D# G.
+
+	
 
 	system("pause");
 

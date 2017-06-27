@@ -1,11 +1,22 @@
 #ifndef CHORD_H
 #define CHORD_H
 
-enum chords {MAJOR, MINOR, DIMINISHED, AUGMENTED, 
+enum chords { MAJOR, MINOR, DIMINISHED, AUGMENTED, 
 		MAJOR_SEVENTH, DOMINANT_SEVENTH, MINOR_SEVENTH,
-		HALF_DIM_SEVENTH, DIM_SEVENTH, POWER, OTHER};
+		HALF_DIM_SEVENTH, DIM_SEVENTH, POWER, OTHER };
 
-enum inversions{ROOT_POSITION, FIRST_INVERSION, SECOND_INVERSION, THIRD_INVERSION};
+enum inversions { ROOT_POSITION, FIRST_INVERSION, 
+		SECOND_INVERSION, THIRD_INVERSION };
+
+enum intervals { MIN_SECOND = 1, MAJ_SECOND, MIN_THIRD, 
+		MAJ_THIRD, P_FOURTH, TRITONE, P_FIFTH, MIN_SIXTH,
+		MAJ_SIXTH, MIN_SEVENTH, MAJ_SEVENTH, OCTAVE };
+
+enum alterations { SUS_FOUR, SUS_TWO, FLAT_FIVE, SHARP_FIVE,
+		FLAT_NINE, SHARP_NINE, SHARP_ELEVEN, FLAT_THIRTEEN };
+
+enum extensions { ADD_TWO, ADD_FOUR, ADD_NINE, ADD_ELEVEN,
+		ADD_THIRTEEN };
 
 #include <vector>
 #include <memory>
@@ -32,7 +43,7 @@ public:
 
 	/*
 	What is the syntax for a function accepting an
-	indefinite amount of parametsr?
+	indefinite amount of parameters?
 	*/
 	Chord(const Note& note1, const Note&);
 

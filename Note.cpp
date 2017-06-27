@@ -6,8 +6,6 @@ Default constructs a Note representing middle-C.
 */
 Note::Note()
 {
-	assert(false && "TODO: Make sure Note::Note() defaults to middle-C");
-
 	letterName = 'C';
 	absoluteKeyboardPosition = 50;
 	accidental = NATURAL;
@@ -19,21 +17,10 @@ Note::Note(const Note & copy)
 	this->copy(copy);
 }
 
-/*
-NEEDS EXCEPTIONS/CHECKS FOR INVALID NOTENAME
-*/
 Note::Note(const std::string& noteName, int octave)
 {
 	if (!isValidNoteName(noteName))
-	{
-		InvalidNoteException e;
-		throw e;
-	}
-
-	letterName = noteName.at(0);
-
-	//12-tone index of note (0-11) * (12 * octave+1) = absoluteKBPos
-	absoluteKeyboardPosition = (letterName - 65) + (12 * (octave + 1));
+		throw InvalidNoteException();
 
 	if (noteName.size() == 2)
 	{
@@ -49,6 +36,10 @@ Note::Note(const std::string& noteName, int octave)
 	}
 	else
 		accidental = NATURAL;
+
+	letterName = noteName.at(0);
+	//                          A-G char as int     12 per octave
+	absoluteKeyboardPosition = (letterName - 65) + (12 * (octave + 1)) + accidental;
 }
 
 std::string Note::toString() const
@@ -72,8 +63,7 @@ std::string Note::fullString() const
 {
 	int octaveNo = octave();
 
-	assert(false && "Look up greatest octave number on a keyboard?");
-	assert(octaveNo >= 0 && octaveNo <= 7);
+	assert(octaveNo >= 0 && octaveNo <= 8);
 
 	return this->toString() + std::to_string(octaveNo);
 }
@@ -104,11 +94,17 @@ bool Note::operator==(const Note & rh) const
 Note & Note::operator++()
 {
 	absoluteKeyboardPosition++;
-	
-	assert(false && "NEEDS SPECIAL CASE FOR E to F, B to C");
+
+	//assert(false && "NEEDS SPECIAL CASE FOR E to F, B to C");
+
+	//special case for E to F, or B to C
+	if (letterName == 'E')
+		letterName = 'F';
+	else if (letterName == 'B')
+		letterName = 'C';
 
 	//unflat or add sharp once
-	if (accidental <= NATURAL)
+	else if (accidental <= NATURAL)
 		accidental++;
 	//else step to next white key
 	else
@@ -137,10 +133,15 @@ Note & Note::operator--()
 {
 	absoluteKeyboardPosition--;
 
-	assert(false && "NEEDS SPECIAL CASE FOR E to F, B to C");
+	//assert(false && "NEEDS SPECIAL CASE FOR E to F, B to C");
+
+	if (letterName == 'F')
+		letterName = 'E';
+	else if (letterName == 'C')
+		letterName = 'B';
 
 	//unsharp or add flat once
-	if (accidental >= NATURAL)
+	else if (accidental >= NATURAL)
 		accidental--;
 	//else step to next white key
 	else
@@ -166,16 +167,26 @@ Note & Note::operator--(int)
 
 Note & Note::operator+=(int halfSteps)
 {
-	for (int i = 0; i < halfSteps; i++)
-		++*this;
-
+	if (halfSteps >= 1)
+	{
+		for (int i = 0; i < halfSteps; i++)
+			++*this;
+	}
+	else if (halfSteps <= -1)
+		*this -= halfSteps;
+	
 	return *this;
 }
 
 Note & Note::operator-=(int halfSteps)
 {
-	for (int i = 0; i < halfSteps; i++)
-		--*this;
+	if (halfSteps <= -1)
+	{
+		for (int i = 0; i < halfSteps; i++)
+			--*this;
+	}
+	else if (halfSteps >= 1)
+		*this += halfSteps;
 
 	return *this;
 }
